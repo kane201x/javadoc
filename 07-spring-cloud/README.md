@@ -34,63 +34,64 @@
 
 ```mermaid
 graph TB
-    subgraph 客户端层
+    subgraph ClientLayer[客户端层]
         WEB[Web 客户端]
         APP[Mobile App]
         THIRD[第三方系统]
     end
 
-    subgraph 网关层
+    subgraph GatewayLayer[网关层]
         GW[Spring Cloud Gateway]
     end
 
-    subgraph 注册中心
-        Nacos[Nacos 注册中心]
+    subgraph RegistryCenter[注册中心]
+        NACOS[Nacos 注册中心]
     end
 
-    subgraph 配置中心
-        Config[Nacos Config]
+    subgraph ConfigCenter[配置中心]
+        CONFIG[Nacos Config]
     end
 
-    subgraph 业务服务层
+    subgraph ServiceLayer[业务服务层]
         User[用户服务]
         Order[订单服务]
         Product[商品服务]
         Pay[支付服务]
     end
 
-    subgraph 基础设施
+    subgraph Infra[基础设施]
         MQ[消息队列]
         DB[(数据库)]
-        Redis[(Redis)]
+        REDIS[(Redis)]
         ES[(Elasticsearch)]
     end
 
-    subgraph 可观测性
+    subgraph Observability[可观测性]
         Zipkin[链路追踪 Zipkin]
-        Log[日志中心 ELK]
+        LOG[日志中心 ELK]
         Monitor[监控 Prometheus+Grafana]
     end
 
-    WEB --> GW[Spring Cloud Gateway]
+    WEB --> GW
     APP --> GW
+    THIRD --> GW
     GW --> User
     GW --> Order
     GW --> Product
     GW --> Pay
-    User --> Nacos[Nacos 注册中心]
-    Order --> Nacos
-    Product --> Nacos
-    Pay --> Nacos
-    User --> Config[Nacos Config]
-    Order --> Config
+    User --> NACOS
+    Order --> NACOS
+    Product --> NACOS
+    Pay --> NACOS
+    User --> CONFIG
+    Order --> CONFIG
     User --> DB
     Order --> DB
-    Order --> MQ[消息队列]
-    Order --> Redis
-    User --> Zipkin[Zipkin 链路追踪]
+    Order --> MQ
+    Order --> REDIS
+    User --> Zipkin
     Order --> Zipkin
-    User --> Sentinel[Ssentinel Dashboard]
+    User --> Sentinel[Sentinel Dashboard]
     Order --> Sentinel
 ```
 
@@ -109,7 +110,7 @@ graph TB
 
 ```mermaid
 graph TD
-    subgraph CAP 三角
+    subgraph CAPTriangle[CAP 三角]
         C[Consistency<br/>一致性] --- A[Availability<br/>可用性]
         A --- P[Partition Tolerance<br/>分区容错性]
         P --- C
@@ -137,7 +138,8 @@ graph TD
 
 ```mermaid
 graph TB
-    subgraph Nacos Server 集群
+    subgraph NacosCluster[Nacos Server 集群]
+        Nacos[Nacos 集群]
         Leader[Leader 节点]
         Follower1[Follower 节点]
         Follower2[Follower 节点]
@@ -145,14 +147,14 @@ graph TB
         Leader --- Follower2
     end
 
-    subgraph 一致性协议
+    subgraph ConsensusProtocol[一致性协议]
         Proto[Distro + Raft]
         Proto --- Leader
         Proto --- Follower1
         Proto --- Follower2
     end
 
-    subgraph 客户端
+    subgraph Clients[客户端]
         Provider[服务提供者]
         Consumer[服务消费者]
     end
@@ -542,30 +544,30 @@ class OrderLoadBalancerConfig {
 
 ```mermaid
 graph LR
-    subgraph 流量控制
+    subgraph FlowControl[流量控制]
         Direct[直接模式]
         Relate[关联模式]
         Link[链路模式]
     end
 
-    subgraph 熔断降级
+    subgraph CircuitBreaking[熔断降级]
         Slow[慢调用比例]
         ExceptionRatio[异常比例]
         ExceptionCount[异常数]
     end
 
-    subgraph 系统保护
+    subgraph SystemProtection[系统保护]
         Load[系统负载]
         RT[平均响应时间]
         Thread[并发线程数]
     end
 
-    Request --> 流量控制
-    Request --> 熔断降级
-    Request --> 系统保护
-    流量控制 --> Block[Block 处理]
-    熔断降级 --> Degrade[Degrade 降级]
-    系统保护 --> Block
+    Request --> FlowControl
+    Request --> CircuitBreaking
+    Request --> SystemProtection
+    FlowControl --> Block[Block 处理]
+    CircuitBreaking --> Degrade[Degrade 降级]
+    SystemProtection --> Block
 ```
 
 ### 5.2 流控模式与效果
@@ -1037,6 +1039,7 @@ spring:
 
 ```mermaid
 sequenceDiagram
+    participant Client as 客户端
     participant TM as TM (事务协调器)
     participant RM1 as RM-订单服务
     participant RM2 as RM-库存服务
@@ -1166,7 +1169,7 @@ public class AccountTccServiceImpl implements AccountTccService {
 
 ```mermaid
 graph LR
-    subgraph Trace
+    subgraph TraceGraph[Trace]
         Span1[Span: API 网关]
         Span2[Span: 用户服务]
         Span3[Span: 订单服务]
@@ -1177,7 +1180,7 @@ graph LR
     Span2 --> Span3
     Span3 --> Span4
 
-    subgraph 元数据
+    subgraph Meta[元数据]
         TraceId[TraceId: a1b2c3d4]
         SpanId1[SpanId: s001]
         SpanId2[SpanId: s002]
@@ -1264,23 +1267,23 @@ Zipkin UI 地址：`http://localhost:9411`
 
 ```mermaid
 graph TB
-    subgraph K8s Pod
-        subgraph 业务容器
+    subgraph K8sPod[K8s Pod]
+        subgraph BizContainer[业务容器]
             App[Spring Boot App]
         end
-        subgraph Sidecar 代理
+        subgraph SidecarProxy[Sidecar 代理]
             Envoy[Envoy Proxy]
         end
         App --> Envoy
     end
 
-    subgraph K8s Pod2
+    subgraph K8sPod2[K8s Pod2]
         App2[Spring Boot App]
         Envoy2[Envoy Proxy]
         App2 --> Envoy2
     end
 
-    subgraph Istio 控制面
+    subgraph IstioControlPlane[Istio 控制面]
         Pilot[Pilot 服务发现/流量管理]
         Mixer[Mixer 遥测/策略]
         Citadel[Citadel 安全]

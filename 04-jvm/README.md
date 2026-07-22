@@ -27,7 +27,7 @@
 graph TD
     subgraph "堆内存 Heap"
         subgraph "新生代 Young Generation"
-            Eden
+            Eden["Eden"]
             S0["Survivor 0 (From)"]
             S1["Survivor 1 (To)"]
         end
@@ -378,7 +378,7 @@ graph TD
     subgraph "对齐填充 Padding"
         PD["使对象大小为 8 字节的整数倍"]
     end
-    MW["MarkWord<br/>8字节"] --> KP["KlassPointer<br/>4字节(压缩)"] --> ID --> PD
+    MW --> KP --> ID --> PD
 ```
 
 **MarkWord 结构（64位）：**
@@ -873,7 +873,7 @@ graph TD
     subgraph "Remembered Set (RSet)"
         RS1["Region 0 的 RSet<br/>记录其他 Region<br/>指向本 Region 的引用"]
     end
-    R1["Region 0"] --> RS1
+    R1 --> RS1
 ```
 
 **G1 核心概念：**

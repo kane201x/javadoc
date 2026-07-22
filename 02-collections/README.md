@@ -23,11 +23,11 @@ Collection 是单列集合的根接口，Map 是双列集合的根接口。两�
 
 ```mermaid
 graph TD
-    Iterable["<<interface>> Iterable<T>"] --> Collection["<<interface>> Collection<E>"]
-    Collection --> List["<<interface>> List<E>"]
-    Collection --> Set["<<interface>> Set<E>"]
-    Collection --> Queue["<<interface>> Queue<E>"]
-    Queue --> Deque["<<interface>> Deque<E>"]
+    Iterable["«interface» Iterable<T>"] --> Collection["«interface» Collection<E>"]
+    Collection --> List["«interface» List<E>"]
+    Collection --> Set["«interface» Set<E>"]
+    Collection --> Queue["«interface» Queue<E>"]
+    Queue --> Deque["«interface» Deque<E>"]
     List --> ArrayList["ArrayList"]
     List --> LinkedList["LinkedList"]
     List --> Vector["Vector (已过时)"]
@@ -39,17 +39,17 @@ graph TD
     Queue --> PriorityQueue["PriorityQueue"]
     Deque --> ArrayDeque["ArrayDeque"]
     Deque --> LinkedList
-    Queue --> BlockingQueue["<<interface>> BlockingQueue"]
+    Queue --> BlockingQueue["«interface» BlockingQueue"]
     BlockingQueue --> ArrayBlockingQueue["ArrayBlockingQueue"]
     BlockingQueue --> LinkedBlockingQueue["LinkedBlockingQueue"]
     BlockingQueue --> PriorityBlockingQueue["PriorityBlockingQueue"]
     BlockingQueue --> DelayQueue["DelayQueue"]
     BlockingQueue --> SynchronousQueue["SynchronousQueue"]
-    Map["<<interface>> Map<K,V>"] --> HashMap["HashMap"]
+    Map["«interface» Map<K,V>"] --> HashMap["HashMap"]
     Map --> LinkedHashMap["LinkedHashMap"]
     Map --> TreeMap["TreeMap"]
     Map --> Hashtable["Hashtable (已过时)"]
-    Map --> ConcurrentMap["<<interface>> ConcurrentMap"]
+    Map --> ConcurrentMap["«interface» ConcurrentMap"]
     ConcurrentMap --> ConcurrentHashMap["ConcurrentHashMap"]
     HashMap --> LinkedHashMap
 ```
@@ -319,14 +319,22 @@ graph TD
         I2["节点分散\nGC 压力大"]
     end
 
-    B --> B1 & B2
-    C --> C1 & C2
-    D --> D1 & D2
-    E --> E1 & E2
-    F --> F1 & F2
-    G --> G1 & G2
-    H --> H1 & H2
-    I --> I1 & I2
+    B --> B1
+    B --> B2
+    C --> C1
+    C --> C2
+    D --> D1
+    D --> D2
+    E --> E1
+    E --> E2
+    F --> F1
+    F --> F2
+    G --> G1
+    G --> G2
+    H --> H1
+    H --> H2
+    I --> I1
+    I --> I2
 ```
 
 ### Vector / Stack（已过时）
@@ -649,12 +657,12 @@ BlockingQueue 是线程安全的阻塞队列接口，支持在队列空/满时�
 
 ```mermaid
 graph TD
-    BlockingQueue["`<<interface>>\nBlockingQueue<E>`"] --> ArrayBlockingQueue["ArrayBlockingQueue\n有界 数组 公平锁"]
+    BlockingQueue["«interface»\nBlockingQueue<E>"] --> ArrayBlockingQueue["ArrayBlockingQueue\n有界 数组 公平锁"]
     BlockingQueue --> LinkedBlockingQueue["LinkedBlockingQueue\n可选有界 链表 分离锁"]
     BlockingQueue --> PriorityBlockingQueue["PriorityBlockingQueue\n无界 二叉堆 ReentrantLock"]
     BlockingQueue --> DelayQueue["DelayQueue\n无界 延迟到期 优先级堆"]
     BlockingQueue --> SynchronousQueue["SynchronousQueue\n容量=0 直接移交"]
-    BlockingQueue --> TransferQueue["`<<interface>>\nTransferQueue`"]
+    BlockingQueue --> TransferQueue["«interface»\nTransferQueue"]
     TransferQueue --> LinkedTransferQueue["LinkedTransferQueue\n无界 预占模式"]
 ```
 

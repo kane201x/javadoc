@@ -52,8 +52,8 @@ flowchart TD
     B --> C["AutoConfigurationImportSelector<br/>实现 ImportSelector 接口"]
     C --> D["selectImports() 方法被调用"]
     D --> E{"Spring Boot 1.x / 2.x"}
-    E -->|"spring.factories"| F["加载 META-INF/spring.factories<br/>org.springframework.boot.autoconfigure.EnableAutoConfiguration"]
-    E -->|"Spring Boot 3.x"| G["加载 META-INF/spring/<br/>AutoConfiguration.imports"]
+    E -->|spring.factories| F["加载 META-INF/spring.factories<br/>org.springframework.boot.autoconfigure.EnableAutoConfiguration"]
+    E -->|Spring Boot 3.x| G["加载 META-INF/spring/<br/>AutoConfiguration.imports"]
     F --> H["获取所有 AutoConfiguration 全限定名"]
     G --> H
     H --> I["按 @AutoConfigureOrder / @AutoConfigureAfter / @AutoConfigureBefore 排序"]
@@ -271,11 +271,11 @@ public void doSomething() {
 
 ```mermaid
 flowchart LR
-    subgraph "Spring Boot 2.x"
+    subgraph SB2["Spring Boot 2.x"]
         A1["META-INF/<br/>spring.factories"] --> B1["KeyValue 格式<br/>EnableAutoConfiguration=类名"]
         B1 --> C1["PropertiesLoader<br/>加载所有 key"]
     end
-    subgraph "Spring Boot 3.x"
+    subgraph SB3["Spring Boot 3.x"]
         A2["META-INF/spring/<br/>AutoConfiguration.imports"] --> B2["每行一个类全限定名"]
         B2 --> C2["SpringFactoriesLoader<br/>迁移至新的 imports 机制"]
     end
@@ -315,7 +315,7 @@ flowchart TD
     N3 --> O
     O --> P["调用 ApplicationContextInitializer.initialize()"]
     P --> Q["发布 ApplicationPreparedEvent"]
-    Q --> R["注册主配置类 --&gt; BeanDefinition"]
+    Q --> R["注册主配置类 <br/>到 BeanDefinition"]
     R --> S["refreshContext(context)"]
     S --> T["AbstractApplicationContext.refresh()<br/>(内嵌容器启动/Bean 加载/自动配置)"]
     T --> U["afterRefresh()"]
@@ -327,7 +327,7 @@ flowchart TD
 
 ```mermaid
 flowchart LR
-    subgraph "ApplicationEvent 发布顺序"
+    subgraph EVT["ApplicationEvent 发布顺序"]
         A["ApplicationStartingEvent"] --> B["ApplicationEnvironmentPreparedEvent"]
         B --> C["ApplicationContextInitializedEvent"]
         C --> D["ApplicationPreparedEvent"]
@@ -365,25 +365,35 @@ public class MyApplicationRunner implements ApplicationRunner {
 
 ```mermaid
 flowchart TB
-    P01["1. @TestPropertySource 注解"]:::high
-    P02["2. 命令行参数 --server.port=9090"]:::high
-    P03["3. SPRING_APPLICATION_JSON 环境变量"]:::high
-    P04["4. ServletConfig 初始化参数"]:::mid
-    P05["5. ServletContext 初始化参数"]:::mid
-    P06["6. JNDI 属性 java:comp/env"]:::mid
-    P07["7. System.getProperties() JVM 系统属性"]:::mid
-    P08["8. OS 环境变量"]:::mid
-    P09["9. application-{profile}.properties/yml"]:::mid
-    P10["10. application.properties/yml"]:::low
-    P11["11. @PropertySource 加载的配置"]:::low
-    P12["12. spring.config.import 导入配置"]:::low
-    P13["13. 默认属性 SpringApplication.setDefaultProperties"]:::low
-    P14["14. RandomValuePropertySource ${random.*}"]:::lowest
+    P01["1. @TestPropertySource 注解"]
+    P02["2. 命令行参数 --server.port=9090"]
+    P03["3. SPRING_APPLICATION_JSON 环境变量"]
+    P04["4. ServletConfig 初始化参数"]
+    P05["5. ServletContext 初始化参数"]
+    P06["6. JNDI 属性 java:comp/env"]
+    P07["7. System.getProperties() JVM 系统属性"]
+    P08["8. OS 环境变量"]
+    P09["9. application-profile.properties/yml"]
+    P10["10. application.properties/yml"]
+    P11["11. @PropertySource 加载的配置"]
+    P12["12. spring.config.import 导入配置"]
+    P13["13. 默认属性 SpringApplication.setDefaultProperties"]
+    P14["14. RandomValuePropertySource random.*"]
 
-    classDef high fill:#f96,stroke:#333
-    classDef mid fill:#fc9,stroke:#333
-    classDef low fill:#ffc,stroke:#333
-    classDef lowest fill:#eee,stroke:#333
+    style P01 fill:#f96,color:#fff
+    style P02 fill:#f96,color:#fff
+    style P03 fill:#f96,color:#fff
+    style P04 fill:#fc9,color:#333
+    style P05 fill:#fc9,color:#333
+    style P06 fill:#fc9,color:#333
+    style P07 fill:#fc9,color:#333
+    style P08 fill:#fc9,color:#333
+    style P09 fill:#fc9,color:#333
+    style P10 fill:#ffc,color:#333
+    style P11 fill:#ffc,color:#333
+    style P12 fill:#ffc,color:#333
+    style P13 fill:#ffc,color:#333
+    style P14 fill:#eee,color:#666
 ```
 
 > **规则：** 高优先级覆盖低优先级。命令行 `--server.port=9090` 的优先级高于 `application.yml` 中的 `server.port`。
@@ -683,7 +693,7 @@ jasypt:
 
 ```mermaid
 flowchart LR
-    subgraph "Spring Cloud 场景启动流程"
+    subgraph CLOUD["Spring Cloud 场景启动流程"]
         A["bootstrap.yml"] --> B["Bootstrap Context<br/>(父上下文)"]
         B --> C["从配置中心<br/>(Config Server)拉取配置"]
         C --> D["application.yml"]
@@ -1446,11 +1456,11 @@ public class MultiDataSourceService {
 flowchart TD
     A["应用层<br/>@Transactional(readOnly=true)"] --> B["AbstractRoutingDataSource<br/>determineCurrentLookupKey()"]
     B --> C{"是否是只读事务?"}
-    C -->|"是"| D["从库 ReadDataSource<br/>(负载均衡: 轮询/随机)"]
+    C -->|是| D["从库 ReadDataSource<br/>(负载均衡: 轮询/随机)"]
     D --> D1["从库 1 (Replica 1)"]
     D --> D2["从库 2 (Replica 2)"]
     D --> D3["从库 N (Replica N)"]
-    C -->|"否"| E["主库 WriteDataSource<br/>(Master)"]
+    C -->|否| E["主库 WriteDataSource<br/>(Master)"]
 ```
 
 **1. 定义数据源路由注解：**
@@ -1744,7 +1754,7 @@ flowchart LR
     D --> E["Grafana<br/>可视化仪表盘"]
     E --> F["告警 AlertManager"]
 
-    subgraph "Micrometer 指标类型"
+    subgraph METRICS["Micrometer 指标类型"]
         G["Counter (计数器)"]
         H["Gauge (仪表)"]
         I["Timer (计时器)"]
@@ -2719,7 +2729,7 @@ flowchart LR
     G --> H["生成可执行文件"]
     H --> I["本地可执行<br/>(秒级启动/低内存)"]
 
-    subgraph "Spring Boot 3.x AOT 支持"
+    subgraph AOT["Spring Boot 3.x AOT 支持"]
         J["spring-boot-aot-engine"] --> K["编译时处理<br/>@Configuration / @Conditional"]
         K --> L["生成<br/>反射配置 / 代理配置"]
         L --> M["集成到 native-image<br/>构建流程"]
@@ -2871,16 +2881,16 @@ public class VirtualThreadController {
 flowchart TD
     A["Spring Boot 2.x<br/>JDK 8+"] --> B["迁移考量"]
     B --> C["JDK 17+ 必须"]
-    B --> D["Jakarta EE 迁移<br/>javax.* → jakarta.*"]
+    B --> D["Jakarta EE 迁移<br/>javax.* 到 jakarta.*"]
     B --> E["Spring Framework 6"]
     B --> F["Spring Security 6"]
-    B --> G["自动配置文件变更<br/>spring.factories→.imports"]
+    B --> G["自动配置文件变更<br/>spring.factories 到 .imports"]
     B --> H["Observability<br/>Micrometer Tracing"]
     B --> I["GraalVM / AOT 支持"]
     B --> J["虚拟线程"]
     C --> K["Spring Boot 3.x<br/>JDK 17+, Jakarta EE 9+"]
 
-    subgraph "迁移工具"
+    subgraph TOOLS["迁移工具"]
         L["spring-boot-upgrade<br/>命令行工具"]
         M["OpenRewrite<br/>自动迁移 Recipe"]
     end

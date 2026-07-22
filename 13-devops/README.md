@@ -22,9 +22,9 @@
 flowchart TD
     subgraph GitFlow["GitFlow"]
         GF_M[main] --> GF_D[develop]
-        GF_D --> GF_F[feature/*]
-        GF_D --> GF_R[release/*]
-        GF_M --> GF_H[hotfix/*]
+        GF_D --> GF_F[feature]
+        GF_D --> GF_R[release]
+        GF_M --> GF_H[hotfix]
         GF_H --> GF_M
         GF_H --> GF_D
         GF_R --> GF_M
@@ -32,14 +32,14 @@ flowchart TD
     end
 
     subgraph GitHubFlow["GitHub Flow"]
-        GH_M[main] --> GH_F[feature/*]
+        GH_M[main] --> GH_F[feature]
         GH_F -->|PR| GH_M
     end
 
     subgraph GitLabFlow["GitLab Flow"]
         GL_M[main] --> GL_D[develop]
-        GL_D --> GL_F[feature/*]
-        GL_M --> GL_P[production/*]
+        GL_D --> GL_F[feature]
+        GL_M --> GL_P[production]
         GL_D -->|MR| GL_M
         GL_M -->|MR| GL_P
     end
@@ -225,7 +225,7 @@ mvn dependency:tree -Dincludes=com.example
 ```mermaid
 flowchart LR
     subgraph Clean["clean 生命周期"]
-        pre-clean --> clean --> post-clean
+        pre_clean --> clean --> post_clean
     end
 
     subgraph Default["default 生命周期"]
@@ -233,7 +233,7 @@ flowchart LR
     end
 
     subgraph Site["site 生命周期"]
-        pre-site --> site --> post-site --> site-deploy
+        pre_site --> site --> post_site --> site_deploy
     end
 ```
 

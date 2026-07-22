@@ -106,10 +106,10 @@ String result = sb.toString();
 
 ```mermaid
 flowchart LR
-    subgraph 堆内存
+    subgraph heap[堆内存]
         heapObj["new String(\"a\")"]
     end
-    subgraph 字符串常量池
+    subgraph pool[字符串常量池]
         pool["\"a\""]
     end
     heapObj -- "intern()" --> pool
@@ -1145,7 +1145,7 @@ AOP（Aspect-Oriented Programming）底层原理：
 
 ```mermaid
 flowchart TD
-    subgraph 字节流
+    subgraph byte_stream[字节流]
         InputStream --> FileInputStream
         InputStream --> BufferedInputStream
         InputStream --> DataInputStream
@@ -1155,7 +1155,7 @@ flowchart TD
         OutputStream --> DataOutputStream
         OutputStream --> ObjectOutputStream
     end
-    subgraph 字符流
+    subgraph char_stream[字符流]
         Reader --> FileReader
         Reader --> BufferedReader
         Reader --> InputStreamReader
@@ -1297,13 +1297,13 @@ while (true) {
 
 ```mermaid
 flowchart LR
-    subgraph 传统IO
+    subgraph traditional_io[传统IO]
         disk1["磁盘"] --> kernel1["内核缓冲区"]
         kernel1 --> user1["用户缓冲区"]
         user1 --> socketBuf1["Socket 缓冲区"]
         socketBuf1 --> nic1["网卡"]
     end
-    subgraph 零拷贝
+    subgraph zero_copy[零拷贝]
         disk2["磁盘"] --> kernel2["内核缓冲区"]
         kernel2 --> nic2["网卡"]
     end

@@ -123,7 +123,7 @@ SPOP lottery 1                     # 随机抽奖
 ```mermaid
 graph TB
     subgraph Level3
-        L3_1["H1"] --> L3_2["--"] --> L3_3["H3"]
+        L3_1["H1"] --> L3_2["..."] --> L3_3["H3"]
     end
     subgraph Level2
         L2_1["H1"] --> L2_2["H2"] --> L2_3["H3"]
@@ -268,14 +268,13 @@ XPENDING mystream mygroup
 ```mermaid
 graph TD
     A["键有 TTL"] --> B{"访问该键？"}
-    B -->|是| C{"已过期？"}
-    C -->|是| Del1["惰性删除 - 返回 nil"]
-    C -->|否| D["正常返回"]
-    B -->|否| E["定期扫描（每 100ms）"]
-    E --> F["随机选 20 个过期 key"]
+    B -->|"是"| C{"已过期？"}
+    C -->|"是"| Del1["惰性删除 - 返回 nil"]
+    C -->|"否"| D["正常返回"]
+    B -->|"否"| E["定期扫描（每 100ms）"]
     F --> G{"过期比例 > 25%？"}
-    G -->|是| H["再扫一批"]
-    G -->|否| I["等待下次"]
+    G -->|"是"| H["再扫一批"]
+    G -->|"否"| I["等待下次"]
     H --> F
 ```
 
@@ -311,9 +310,9 @@ CONFIG SET maxmemory-policy allkeys-lru
 graph LR
     Parent["Redis 主进程"] -->|fork| Child["子进程"]
     Child -->|"COW 共享内存页"| Mem["内存数据"]
-    Mem -->|写入临时 RDB| Temp["temp.rdb"]
+    Mem -->|"写入临时 RDB"| Temp["temp.rdb"]
     Temp -->|rename| RDB["dump.rdb"]
-    Child -->|通知父进程| Done["完成"]
+    Child -->|"通知父进程"| Done["完成"]
 ```
 
 #### AOF（追加文件）
@@ -434,10 +433,10 @@ redisTemplate.execute(new DefaultRedisScript<>(lua, Long.class),
 graph TD
     Main["主线程（事件循环）"] --> Accept["accept 新连接"]
     Accept --> IOThreads["IO 线程池（多线程读/写 socket）"]
-    IOThreads -->|解析完成| Main
-    Main -->|执行命令（单线程）| Exec["命令处理"]
-    Exec -->|响应数据| IOThreads
-    IOThreads -->|写回 client| Client["客户端"]
+    IOThreads -->|"解析完成"| Main
+    Main -->|"执行命令（单线程）"| Exec["命令处理"]
+    Exec -->|"响应数据"| IOThreads
+    IOThreads -->|"写回 client"| Client["客户端"]
 ```
 
 - IO 读取/写入多线程，**命令执行仍然是单线程**
@@ -456,12 +455,12 @@ graph TD
 ```mermaid
 graph LR
     Req["请求"] --> BF{"布隆过滤器<br/>存在？"}
-    BF -->|否| Return["直接返回"]
-    BF -->|是| Cache{"缓存有？"}
-    Cache -->|是| Hit["返回"]
-    Cache -->|否| DB["查 DB"]
+    BF -->|"否"| Return["直接返回"]
+    BF -->|"是"| Cache{"缓存有？"}
+    Cache -->|"是"| Hit["返回"]
+    Cache -->|"否"| DB["查 DB"]
     DB -->|null| Null["缓存空值<br/>TTL 短"]
-    DB -->|有| SetCache["设置缓存"]
+    DB -->|"有"| SetCache["设置缓存"]
 ```
 
 **布隆过滤器原理：**
@@ -553,7 +552,7 @@ redisTemplate.opsForValue().set(key, value, randomTtl, TimeUnit.SECONDS);
 ```mermaid
 graph TD
     Update["更新 DB"] --> Del["删除缓存"]
-    Del -->|短暂不一致| Next["下次查询重新加载"]
+    Del -->|"短暂不一致"| Next["下次查询重新加载"]
 ```
 
 **延迟双删：**
@@ -711,9 +710,9 @@ sequenceDiagram
 
 ```mermaid
 graph TB
-    Client -->|读写| M["Redis Master"]
-    M -->|复制| S1["Redis Slave 1"]
-    M -->|复制| S2["Redis Slave 2"]
+    Client -->|"读写"| M["Redis Master"]
+    M -->|"复制"| S1["Redis Slave 1"]
+    M -->|"复制"| S2["Redis Slave 2"]
     Sent1["Sentinel 1"]
     Sent2["Sentinel 2"]
     Sent3["Sentinel 3"]
@@ -753,7 +752,7 @@ min-slaves-max-lag 10
 
 ```mermaid
 graph TD
-    Client -->|CRC16(key)%16384| Slot["哈希槽"]
+    Client -->|"CRC16(key)%16384"| Slot["哈希槽"]
     Slot --> N1["Node 1<br/>(槽 0-5460)"]
     Slot --> N2["Node 2<br/>(槽 5461-10922)"]
     Slot --> N3["Node 3<br/>(槽 10923-16383)"]

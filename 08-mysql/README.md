@@ -96,7 +96,7 @@ B+Tree 是 MySQL InnoDB 默认的索引结构，核心特征：
 
 ```mermaid
 graph TD
-    subgraph 非叶子节点
+    subgraph non_leaf["非叶子节点"]
         A["50 | 120 | 200"]
         B["10 | 20 | 30 | 40"]
         C["60 | 80 | 100"]
@@ -104,7 +104,7 @@ graph TD
         E["220 | 280 | 350"]
     end
 
-    subgraph 叶子节点[双向链表]
+    subgraph leaf["叶子节点 [双向链表]"]
         F["10→20→30→40→50→60→80→100→120→140→..."]
     end
 
@@ -145,7 +145,7 @@ graph TD
 
 ```mermaid
 graph LR
-    subgraph 聚簇索引[InnoDB 主键索引]
+    subgraph cluster_idx["聚簇索引 [InnoDB 主键索引]"]
         A1["B+Tree 非叶子<br/>(键: ID 1, 5, 9)"]
         A2["叶子: ID=1, 行数据"]
         A3["叶子: ID=5, 行数据"]
@@ -155,7 +155,7 @@ graph LR
         A1 --> A4
     end
 
-    subgraph 二级索引[InnoDB 普通索引]
+    subgraph secondary_idx["二级索引 [InnoDB 普通索引]"]
         B1["B+Tree 非叶子<br/>(键: name 'Alice','Bob')"]
         B2["叶子: name='Alice',<br/>主键 ID=1"]
         B3["叶子: name='Bob',<br/>主键 ID=5"]
@@ -163,7 +163,7 @@ graph LR
         B1 --> B3
     end
 
-    subgraph 回表操作
+    subgraph back_to_table["回表操作"]
         C1["查询 name='Alice'"]
         C2["二级索引找到 ID=1"]
         C3["回表: 通过 ID=1<br/>查聚簇索引拿整行"]
@@ -207,14 +207,14 @@ SELECT * FROM t WHERE a = 1 AND b > 5 AND c = 3;
 
 ```mermaid
 graph TB
-    subgraph 无 ICP[MySQL 5.6 之前]
+    subgraph no_icp["无 ICP [MySQL 5.6 之前]"]
         A1["存储引擎通过索引<br/>定位记录"]
         A2["回表读取整行"]
         A3["Server 层过滤<br/>其他条件"]
         A1 --> A2 --> A3
     end
 
-    subgraph 有 ICP[MySQL 5.6+ 索引下推]
+    subgraph has_icp["有 ICP [MySQL 5.6+ 索引下推]"]
         B1["存储引擎通过索引<br/>定位记录"]
         B2["在存储引擎层<br/>用索引列过滤（不回表）"]
         B3["仅满足条件的记录<br/>回表读取整行"]
@@ -464,18 +464,18 @@ SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 
 ```mermaid
 graph TB
-    subgraph 当前事务[当前事务 ReadView]
+    subgraph curr_txn["当前事务 ReadView"]
         RV["ReadView 结构<br/>m_ids: 活跃事务ID列表<br/>min_trx_id: 最小活跃ID<br/>max_trx_id: 下一个分配ID<br/>creator_trx_id: 自身ID"]
     end
 
-    subgraph 版本链[Undo Log 版本链]
+    subgraph version_chain["Undo Log 版本链"]
         V3["记录行 trx_id=30 roll_pointer→"]
         V2["记录行 trx_id=20 roll_pointer→"]
         V1["记录行 trx_id=10 roll_pointer→"]
         V3 --> V2 --> V1
     end
 
-    subgraph 可见性判断
+    subgraph visibility["可见性判断"]
         D1["trx_id < min_trx_id<br/>→ 已提交，可见"]
         D2["trx_id ∈ m_ids<br/>→ 未提交，不可见"]
         D3["trx_id = creator_trx_id<br/>→ 自己修改，可见"]
@@ -505,7 +505,7 @@ graph TB
 
 ```mermaid
 graph LR
-    subgraph 索引间隙[主键索引 id: 5, 10, 15, 20]
+    subgraph index_gap["索引间隙 [主键索引 id: 5, 10, 15, 20]"]
         G1["(-∞, 5]"]
         G2["(5, 10]"]
         G3["(10, 15]"]
@@ -651,10 +651,10 @@ SHOW BINLOG EVENTS IN 'mysql-bin.000001';
 ```mermaid
 sequenceDiagram
     participant Client
-    participant Server as MySQL Server
-    participant InnoDB as InnoDB 引擎
+    participant Server as "MySQL Server"
+    participant InnoDB as "InnoDB 引擎"
     participant Binlog as Binlog
-    participant Redo as Redo Log
+    participant Redo as "Redo Log"
 
     Client->>Server: BEGIN; UPDATE t SET x=1 WHERE id=1;
     Server->>InnoDB: 更新内存中的行
@@ -788,20 +788,20 @@ START SLAVE;
 
 ```mermaid
 graph TB
-    subgraph 范围分片[Range Sharding]
+    subgraph range_shard["范围分片 [Range Sharding]"]
         R1["user_0: id 1~1000万"]
         R2["user_1: id 1001万~2000万"]
         R3["user_2: id 2001万~3000万"]
     end
 
-    subgraph 哈希分片[Hash Sharding]
+    subgraph hash_shard["哈希分片 [Hash Sharding]"]
         H1["user_0: hash(user_id) % 4 = 0"]
         H2["user_1: hash(user_id) % 4 = 1"]
         H3["user_2: hash(user_id) % 4 = 2"]
         H4["user_3: hash(user_id) % 4 = 3"]
     end
 
-    subgraph 一致性哈希[Consistent Hashing]
+    subgraph consistent_hash["一致性哈希 [Consistent Hashing]"]
         C1["哈希环: 节点分布在环上"]
         C2["数据哈希后顺时针找最近节点"]
         C3["增减节点只需迁移相邻数据"]
@@ -1039,7 +1039,7 @@ PostgreSQL 是一个功能强大的开源对象关系型数据库，以其高度
 
 ```mermaid
 graph TD
-    subgraph "PostgreSQL MVCC"
+    subgraph pg_mvcc["PostgreSQL MVCC"]
         A[插入新行] --> B[生成新元组<br/>xmin=当前事务ID]
         C[更新行] --> D[标记旧元组为无效<br/>xmax=当前事务ID]
         D --> E[插入新版本元组<br/>xmin=当前事务ID]
@@ -1082,7 +1082,7 @@ CREATE INDEX idx_covering ON orders (user_id) INCLUDE (amount, status);
 
 ```mermaid
 graph LR
-    subgraph "PostgreSQL 流复制"
+    subgraph pg_replication["PostgreSQL 流复制"]
         P[Primary] -->|WAL 发送| S1[Standby 同步]
         P -->|WAL 发送| S2[Standby 异步]
         P -->|WAL 发送| S3[Standby 异步]
@@ -1144,7 +1144,7 @@ TiDB 是 PingCAP 开发的分布式 NewSQL 数据库，兼容 MySQL 协议，支
 
 ```mermaid
 graph TB
-    subgraph "TiDB 架构"
+    subgraph tidb_arch["TiDB 架构"]
         LB[Load Balancer] --> T1[TiDB Server<br/>SQL 层/无状态]
         LB --> T2[TiDB Server<br/>SQL 层/无状态]
         LB --> T3[TiDB Server<br/>SQL 层/无状态]
@@ -1181,7 +1181,7 @@ graph TB
 
 ```mermaid
 graph LR
-    subgraph "TiDB Region 分片"
+    subgraph tidb_region["TiDB Region 分片"]
         R1[Region 1<br/>Key: a~f<br/>96MB]
         R2[Region 2<br/>Key: g~m<br/>96MB]
         R3[Region 3<br/>Key: n~t<br/>96MB]
@@ -1219,9 +1219,9 @@ TiDB 使用 **Percolator** 事务模型（Google 论文实现），通过 PD 获
 ```mermaid
 sequenceDiagram
     participant C as Client
-    participant L as Raft Leader
-    participant F1 as Raft Follower 1
-    participant F2 as Raft Follower 2
+    participant L as "Raft Leader"
+    participant F1 as "Raft Follower 1"
+    participant F2 as "Raft Follower 2"
     
     C->>L: Write Request
     L->>L: Append to Log
@@ -1285,7 +1285,7 @@ OceanBase 是蚂蚁集团自主研发的分布式关系数据库，支持 MySQL 
 
 ```mermaid
 graph TB
-    subgraph "OceanBase 架构"
+    subgraph ob_arch["OceanBase 架构"]
         APP[应用] --> OBProxy
         OBProxy[OBProxy<br/>连接路由/读写分离] --> OBS1[OBServer Node 1<br/>rootserver/计算/存储]
         OBProxy --> OBS2[OBServer Node 2<br/>计算/存储]
@@ -1326,9 +1326,9 @@ OceanBase 采用 LSM-Tree（Log Structured Merge Tree）存储引擎，写入先
 ```mermaid
 sequenceDiagram
     participant C as Client
-    participant L as Partition Leader
-    participant F1 as Partition Follower 1
-    participant F2 as Partition Follower 2
+    participant L as "Partition Leader"
+    participant F1 as "Partition Follower 1"
+    participant F2 as "Partition Follower 2"
     
     C->>L: Write Request
     L->>L: Write MemTable + Clog
@@ -1489,7 +1489,7 @@ graph TD
 
 ```mermaid
 graph LR
-    subgraph "数据源切换方案"
+    subgraph ds_switch["数据源切换方案"]
         App[应用] --> DC{数据源切换}
         DC -->|方案1| M[MySQL]
         DC -->|方案2| PG[PostgreSQL]
@@ -1742,7 +1742,7 @@ spring:
 
 ```mermaid
 graph LR
-    subgraph "数据迁移同步方案"
+    subgraph migration["数据迁移同步方案"]
         SRC[源数据库<br/>MySQL] -->|全量迁移| FULL[mysqldump / mydumper<br/>Dumpling / pg_dump]
         SRC -->|增量同步| CDC[CDC 工具<br/>Canal / Debezium / TiCDC / OB CDC]
         FULL --> TGT[目标数据库]
@@ -1768,7 +1768,7 @@ graph LR
 
 ```mermaid
 graph TD
-    subgraph "MySQL 分片策略"
+    subgraph mysql_shard["MySQL 分片策略"]
         ST[分片策略] --> R[范围分片]
         ST --> H[哈希分片]
         ST --> T[时间分片]
@@ -1977,7 +1977,7 @@ EXPLAIN SELECT * FROM orders WHERE created_at >= '2024-06-01' AND created_at < '
 
 ```mermaid
 graph TD
-    subgraph "TiDB 数据分布"
+    subgraph tidb_data["TiDB 数据分布"]
         T[Table: orders] -->|分区规则| P[Partition p2024<br/>逻辑分区]
         P -->|自动分裂| R1[Region 1<br/>Key Range<br/>~96MB]
         P -->|自动分裂| R2[Region 2<br/>Key Range<br/>~96MB]

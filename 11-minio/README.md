@@ -152,7 +152,7 @@ flowchart TB
         Object["📄 对象文件 mydata.bin"]
     end
 
-    subgraph Split["M = 4 校验块  N = 8 数据块"]
+    subgraph Split["分片: M=4 校验块 N=8 数据块"]
         D1["D1"] --- D2["D2"] --- D3["D3"] --- D4["D4"]
         D4 --- D5["D5"] --- D6["D6"] --- D7["D7"] --- D8["D8"]
         P1["P1"] --- P2["P2"] --- P3["P3"] --- P4["P4"]
@@ -258,19 +258,19 @@ MinIO 支持三种加密模式：
 
 ```mermaid
 flowchart TB
-    subgraph SSE-C["SSE-C 客户端密钥"]
+    subgraph SSE_C["SSE-C 客户端密钥"]
         C1["客户端请求：PUT /bucket/obj<br/>x-amz-server-side-encryption-customer-key: xxx"]
         C2["MinIO 使用客户端密钥加密数据"]
         C3["不持久化密钥，丢失即不可恢复"]
     end
 
-    subgraph SSE-S3["SSE-S3 MinIO 托管"]
+    subgraph SSE_S3["SSE-S3 MinIO 托管"]
         S1["MinIO 自动生成密钥"]
         S2["每对象独立 DEK + KEK 加密"]
         S3["客户端无感知"]
     end
 
-    subgraph SSE-KMS["SSE-KMS 外部 KMS"]
+    subgraph SSE_KMS["SSE-KMS 外部 KMS"]
         K1["KES 服务 ←→ 外部 KMS"]
         K2["通过 KES 获取密钥加密"]
         K3["支持密钥轮换/审计"]
@@ -1740,7 +1740,6 @@ scrape_configs:
 **生成 Prometheus Token：**
 
 ```bash
-# 创建 Prometheus 专用的访问密钥
 mc admin user add myminio prometheus-user strong-password
 mc admin policy set myminio prometheus user=prometheus-user
 

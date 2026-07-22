@@ -1359,8 +1359,8 @@ graph TD
     A --> A2[Availability<br/>可用性]
     A --> P[Partition Tolerance<br/>分区容忍性]
     C -.->|CA| RDBMS
-    A -.->|AP| Cassandra / Eureka
-    P -.->|CP| ZK / Etcd
+    A -.->|AP| APnode[Cassandra / Eureka]
+    P -.->|CP| CPnode[ZK / Etcd]
     style C fill:#FFB347
     style A2 fill:#87CECB
     style P fill:#FFD700
@@ -1427,7 +1427,7 @@ graph TD
         VN1[虚拟节点 A1]
         VN2[虚拟节点 A2]
     end
-    N1 --> |hash| Ring[0 - 2^32-1]
+    N1 -->|hash| Ring[0 - 2^32-1]
     N2 --> Ring
     N3 --> Ring
     K1 -->|顺时针查找| N1
@@ -1450,9 +1450,9 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant Coordinator as 协调者
-    participant RM1 as 资源管理器 1
-    participant RM2 as 资源管理器 2
+    participant Coordinator as "协调者"
+    participant RM1 as "资源管理器 1"
+    participant RM2 as "资源管理器 2"
 
     Note over Coordinator,RM2: 阶段一：准备 (Prepare)
     Coordinator->>RM1: 准备事务 (prepare)
@@ -1471,7 +1471,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant C as 协调者
+    participant C as "协调者"
     participant RM1 as RM 1
     participant RM2 as RM 2
 
@@ -1498,10 +1498,10 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant Client as 客户端
-    participant TM as 事务管理器
-    participant S1 as 服务 A
-    participant S2 as 服务 B
+    participant Client as "客户端"
+    participant TM as "事务管理器"
+    participant S1 as "服务 A"
+    participant S2 as "服务 B"
 
     Client->>TM: 开始全局事务
     TM->>S1: Try (预留资源)
@@ -1550,10 +1550,10 @@ public class InventoryTccService implements TccService {
 
 ```mermaid
 sequenceDiagram
-    participant Saga as Saga 编排器
-    participant S1 as 服务 1: 扣库存
-    participant S2 as 服务 2: 创建订单
-    participant S3 as 服务 3: 扣款
+    participant Saga as "Saga 编排器"
+    participant S1 as "服务 1: 扣库存"
+    participant S2 as "服务 2: 创建订单"
+    participant S3 as "服务 3: 扣款"
 
     Saga->>S1: 扣库存
     S1->>Saga: OK
@@ -1593,7 +1593,7 @@ graph TD
         R1 <--> R3[Region 3]
     end
     subgraph 多副本
-        R[Replica 1] <--> R[Replica 2] <--> R[Replica 3]
+        R1[Replica 1] <--> R2[Replica 2] <--> R3[Replica 3]
     end
 ```
 

@@ -55,11 +55,11 @@ graph TB
     end
 
     subgraph Broker Cluster
-        subgraph Broker-A 主
+        subgraph "Broker-A 主"
             B1M[Broker-A Master]
             B1S[Broker-A Slave]
         end
-        subgraph Broker-B 主
+        subgraph "Broker-B 主"
             B2M[Broker-B Master]
             B2S[Broker-B Slave]
         end
@@ -143,7 +143,7 @@ RocketMQ 使用**混合存储模型**：所有消息顺序写入 CommitLog，异
 
 ```mermaid
 graph TB
-    subgraph 消息存储结构
+    subgraph "消息存储结构"
         CL[CommitLog<br/>顺序写，所有消息<br/>共用一个文件]
         CQ1[ConsumeQueue-TopicA-Queue0<br/>逻辑队列，记录偏移量]
         CQ2[ConsumeQueue-TopicA-Queue1<br/>逻辑队列，记录偏移量]
@@ -151,7 +151,7 @@ graph TB
         IF[IndexFile<br/>索引文件，<br/>支持按 Key/时间查询]
     end
 
-    subgraph 写入流程
+    subgraph "写入流程"
         MSG[消息到达 Broker]
         CL -->|异步构建| CQ1
         CL -->|异步构建| CQ2
@@ -186,14 +186,14 @@ RocketMQ 通过 **mmap + write**（MappedByteBuffer）和 **FileChannel.transfer
 
 ```mermaid
 graph LR
-    subgraph 传统 IO
+    subgraph "传统 IO"
         A1[磁盘] -->|DMA| B1[内核缓冲区]
         B1 -->|CPU 复制| C1[用户缓冲区]
         C1 -->|CPU 复制| D1[Socket 缓冲区]
         D1 -->|DMA| E1[网卡]
     end
 
-    subgraph 零拷贝 transferTo
+    subgraph "零拷贝 transferTo"
         A2[磁盘] -->|DMA| B2[内核缓冲区]
         B2 -->|DMA| C2[网卡]
     end
@@ -390,21 +390,21 @@ sequenceDiagram
 
 ```mermaid
 graph TB
-    subgraph 平均分配 AllocateMessageQueueAveragely
+    subgraph "平均分配 AllocateMessageQueueAveragely"
         Q1[Queue 0] --> C1[Consumer-1]
         Q2[Queue 1] --> C1
         Q3[Queue 2] --> C2[Consumer-2]
         Q4[Queue 3] --> C2
     end
 
-    subgraph 循环分配 AllocateMessageQueueAveragelyByCircle
+    subgraph "循环分配 AllocateMessageQueueAveragelyByCircle"
         Q5[Queue 0] --> C3[Consumer-1]
         Q6[Queue 1] --> C4[Consumer-2]
         Q7[Queue 2] --> C3
         Q8[Queue 3] --> C4
     end
 
-    subgraph 一致性哈希 AllocateMessageQueueConsistentHash
+    subgraph "一致性哈希 AllocateMessageQueueConsistentHash"
         Q9[Queue 0] -->|hash| C5[Consumer-1]
         Q10[Queue 1] -->|hash| C6[Consumer-2]
         Q11[Queue 2] -->|hash| C5
@@ -488,7 +488,7 @@ sequenceDiagram
     participant P as Producer
     participant NS as NameServer
     participant B as Broker
-    participant DB as 本地数据库
+    participant "本地数据库" as DB
 
     P->>B: 1. 发送半消息（PREPARE）
     B->>P: 2. 半消息写入成功，返回 offset
@@ -711,16 +711,16 @@ if (result.getSendStatus() == SendStatus.SEND_OK) {
 
 ```mermaid
 graph LR
-    subgraph 同步刷盘
+    subgraph "同步刷盘"
         A1[消息写入 PageCache] -->|FlushCommitLogTimed<br/>立即刷盘| B1[磁盘]
     end
-    subgraph 异步刷盘
+    subgraph "异步刷盘"
         A2[消息写入 PageCache] -->|FlushDiskType=ASYNC_FLUSH<br/>定时刷盘| B2[磁盘]
     end
-    subgraph 同步复制
+    subgraph "同步复制"
         C1[Master 写入] -->|等待 Slave 确认| D1[Slave]
     end
-    subgraph 异步复制
+    subgraph "异步复制"
         C2[Master 写入] -->|不等待| D2[Slave]
     end
 ```
@@ -933,16 +933,16 @@ java -jar target/rocketmq-dashboard.jar --rocketmq.config.namesrvAddr=127.0.0.1:
 
 ```mermaid
 graph TB
-    subgraph 机房
+        subgraph "机房"
         NS1[NameServer-1<br/>port:9876]
         NS2[NameServer-2<br/>port:9876]
 
-        subgraph Broker 组 A
+        subgraph "Broker 组 A"
             B1M[Broker-A-Master<br/>port:10911]
             B1S[Broker-A-Slave<br/>port:10921]
         end
 
-        subgraph Broker 组 B
+        subgraph "Broker 组 B"
             B2M[Broker-B-Master<br/>port:10931]
             B2S[Broker-B-Slave<br/>port:10941]
         end
@@ -1183,11 +1183,11 @@ producer.close();
 
 ```mermaid
 sequenceDiagram
-    participant App as Application
-    participant PP as Producer<br/>Interceptor/Serializer
-    participant ACC as Accumulator<br/>(Batch Buffer)
-    participant SN as Sender Thread
-    participant BK as Broker
+    participant "Application" as App
+    participant "Producer<br/>Interceptor/Serializer" as PP
+    participant "Accumulator<br/>(Batch Buffer)" as ACC
+    participant "Sender Thread" as SN
+    participant "Broker" as BK
     
     App->>PP: send(msg)
     PP->>PP: 拦截器链→序列化→分区器

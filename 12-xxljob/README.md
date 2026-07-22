@@ -29,23 +29,23 @@ XXL-Job 由三大组件构成：
 
 ```mermaid
 graph TB
-    subgraph 调度中心集群
+    subgraph AdminCluster[调度中心集群]
         A1[调度中心 Node1]
         A2[调度中心 Node2]
         A3[调度中心 Node3]
     end
 
-    subgraph 数据库
+    subgraph Database[数据库]
         DB[(MySQL<br/>xxl_job 数据库)]
     end
 
-    subgraph 执行器集群
+    subgraph ExecCluster[执行器集群]
         E1[执行器 App1<br/>:9999]
         E2[执行器 App2<br/>:9999]
         E3[执行器 App3<br/>:9999]
     end
 
-    subgraph 任务实例
+    subgraph Tasks[任务实例]
         T1[Job A-1<br/>分片 0]
         T2[Job A-2<br/>分片 1]
         T3[Job A-3<br/>分片 2]
@@ -88,10 +88,10 @@ SELECT * FROM xxl_job_lock WHERE lock_name = 'schedule_lock' FOR UPDATE;
 
 ```mermaid
 sequenceDiagram
-    participant N1 as 调度中心-Node1
-    participant N2 as 调度中心-Node2
-    participant DB as MySQL
-    participant Exec as 执行器
+    participant N1 as "调度中心-Node1"
+    participant N2 as "调度中心-Node2"
+    participant DB as "MySQL"
+    participant Exec as "执行器"
 
     N1->>DB: BEGIN
     N1->>DB: SELECT * FROM xxl_job_lock FOR UPDATE
@@ -99,7 +99,7 @@ sequenceDiagram
 
     N2->>DB: BEGIN
     N2->>DB: SELECT * FROM xxl_job_lock FOR UPDATE
-    DB-->>N2: ⏳ 等待锁...
+    DB-->>N2: 等待锁...
 
     N1->>DB: 查询待调度任务
     N1->>N1: 触发调度
@@ -405,17 +405,17 @@ sys.exit(0)
 
 ```mermaid
 graph TB
-    subgraph 调度中心
+    subgraph Scheduler[调度中心]
         SC[调度中心触发任务]
     end
 
-    subgraph 执行器集群
+    subgraph ExecCluster[执行器集群]
         E0[执行器-1<br/>分片: index=0 total=3]
         E1[执行器-2<br/>分片: index=1 total=3]
         E2[执行器-3<br/>分片: index=2 total=3]
     end
 
-    subgraph 数据表
+    subgraph DataTable[数据表]
         D0[数据 ID % 3 == 0<br/>id=3,6,9,12...]
         D1[数据 ID % 3 == 1<br/>id=1,4,7,10...]
         D2[数据 ID % 3 == 2<br/>id=2,5,8,11...]

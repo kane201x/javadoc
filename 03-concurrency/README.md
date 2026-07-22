@@ -1067,7 +1067,7 @@ flowchart LR
     A[线程读取主存值 V] --> B[计算新值 B]
     B --> C{CAS 比较: 当前值 == V?}
     C -->|是| D[写入新值 B, 成功]
-    C -->|否| A[重新读取, 自旋重试]
+    C -->|否| A
 
     subgraph "Unsafe.compareAndSwap"
         E[内存地址偏移量]
@@ -1226,7 +1226,7 @@ Thread 3 → Cell[2]
 flowchart TD
     subgraph "ThreadLocal 结构"
         A[Thread] --> B[ThreadLocalMap]
-        B --> C[Entry[] table]
+        B --> C["Entry[] table"]
         C --> D[Entry: key=ThreadLocal 弱引用, value=实际值]
     end
 
