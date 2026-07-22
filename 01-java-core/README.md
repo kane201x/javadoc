@@ -1219,26 +1219,26 @@ int data = dis.readInt(); // 直接读 int
 
 ```mermaid
 flowchart LR
-    subgraph Buffer[NIO Buffer]
+    subgraph buf_region[NIO Buffer]
         position["position"]
         limit["limit"]
         capacity["capacity"]
         data["数据"]
     end
-    subgraph Channel[NIO Channel]
+    subgraph chan_region[NIO Channel]
         FileChannel
         SocketChannel
         ServerSocketChannel
         DatagramChannel
     end
-    subgraph Selector[NIO Selector]
+    subgraph sel_region[NIO Selector]
         SelectionKey1["SelectionKey"]
         SelectionKey2["SelectionKey"]
         SelectionKey3["SelectionKey"]
     end
-    Channel -- "读写" --> Buffer
-    Channel -- "注册" --> Selector
-    Selector -- "select() 就绪事件" --> Channel
+    chan_region -- "读写" --> buf_region
+    chan_region -- "注册" --> sel_region
+    sel_region -- "select() 就绪事件" --> chan_region
 ```
 
 ```java

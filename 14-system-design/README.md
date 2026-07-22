@@ -1383,11 +1383,11 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant C1 as Candidate 1
-    participant C2 as Candidate 2
-    participant L as Leader
-    participant F1 as Follower 1
-    participant F2 as Follower 2
+    participant C1 as "Candidate 1"
+    participant C2 as "Candidate 2"
+    participant L as "Leader"
+    participant F1 as "Follower 1"
+    participant F2 as "Follower 2"
 
     Note over C1,F2: 1. Leader 选举
     C1->>F1: RequestVote (term=1)
@@ -1472,8 +1472,8 @@ sequenceDiagram
 ```mermaid
 sequenceDiagram
     participant C as "协调者"
-    participant RM1 as RM 1
-    participant RM2 as RM 2
+    participant RM1 as "RM 1"
+    participant RM2 as "RM 2"
 
     Note over C,RM2: 阶段一：CanCommit
     C->>RM1: CanCommit?
@@ -1593,7 +1593,7 @@ graph TD
         R1 <--> R3[Region 3]
     end
     subgraph 多副本
-        R1[Replica 1] <--> R2[Replica 2] <--> R3[Replica 3]
+        P1[Replica 1] <--> P2[Replica 2] <--> P3[Replica 3]
     end
 ```
 

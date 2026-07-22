@@ -35,10 +35,10 @@ graph TD
             Old["Tenured"]
         end
     end
-    Eden -->|"Minor GC 后存活"| S0
-    S0 -->|"Minor GC + 年龄增长"| S1
-    S1 -->|"年龄达到阈值(默认15)"| Old
-    Eden -->|"大对象直接进入"| Old
+    Eden -->|Minor GC 后存活| S0
+    S0 -->|Minor GC + 年龄增长| S1
+    S1 -->|年龄达到阈值(默认15)| Old
+    Eden -->|大对象直接进入| Old
 ```
 
 **默认比例（JDK8）：**
@@ -301,8 +301,8 @@ flowchart LR
     C["准备 Preparation<br/>为静态变量分配内存并赋零值<br/>(int=0, ref=null)"] -->
     D["解析 Resolution<br/>符号引用 → 直接引用<br/>(类/接口/字段/方法)"] -->
     E["初始化 Initialization<br/>执行 &lt;clinit&gt; 方法<br/>(静态变量赋值 + 静态代码块)"]
-    E -.->|"使用中"| F["使用 Using"]
-    F -.->|"卸载"| G["卸载 Unloading"]
+    E -.->|使用中| F["使用 Using"]
+    F -.->|卸载| G["卸载 Unloading"]
 ```
 
 **注意：** 解析（Resolution）可以在初始化之后发生，这是 JVM 规范允许的（动态绑定）。
@@ -348,16 +348,16 @@ System.out.println(Const.HELLO); // 不会触发初始化
 ```mermaid
 flowchart TD
     A["new 指令"] --> B{"常量池中检查<br/>类符号引用"}
-    B -->|"未加载"| C["类加载<br/>加载→验证→准备→解析→初始化"]
-    B -->|"已加载"| D["分配内存"]
+    B -->|未加载| C["类加载<br/>加载→验证→准备→解析→初始化"]
+    B -->|已加载| D["分配内存"]
     C --> D
     D --> E{"分配方式"}
-    E -->|"规整内存"| F["指针碰撞<br/>Bump The Pointer"]
-    E -->|"不规整"| G["空闲列表<br/>Free List"]
+    E -->|规整内存| F["指针碰撞<br/>Bump The Pointer"]
+    E -->|不规整| G["空闲列表<br/>Free List"]
     F --> H{"是否开启 TLAB"}
     G --> H
-    H -->|"是"| I["TLAB 分配<br/>(线程私有，无锁)"]
-    H -->|"否"| J["Eden 区分配<br/>(CAS 加锁)"]
+    H -->|是| I["TLAB 分配<br/>(线程私有，无锁)"]
+    H -->|否| J["Eden 区分配<br/>(CAS 加锁)"]
     I --> K["初始化零值<br/>(保证字段不读空)"]
     J --> K
     K --> L["设置对象头<br/>MarkWord + KlassPointer"]
@@ -542,13 +542,13 @@ graph TD
         ExtCL["Platform ClassLoader (JDK9+)<br/>Extension ClassLoader (JDK8-)<br/>加载 lib/ext 下的类"]
         BootCL["Bootstrap ClassLoader<br/>C++ 实现<br/>加载 rt.jar / java.base"]
     end
-    CustomCL -->|"先委托父加载器"| AppCL
-    AppCL -->|"委托"| ExtCL
-    ExtCL -->|"委托"| BootCL
-    BootCL -->|"找不到，返回"| ExtCL
-    ExtCL -->|"找不到，返回"| AppCL
-    AppCL -->|"找不到，返回"| CustomCL
-    CustomCL -->|"自己尝试加载"| Result["findClass()"]
+    CustomCL -->|先委托父加载器| AppCL
+    AppCL -->|委托| ExtCL
+    ExtCL -->|委托| BootCL
+    BootCL -->|找不到，返回| ExtCL
+    ExtCL -->|找不到，返回| AppCL
+    AppCL -->|找不到，返回| CustomCL
+    CustomCL -->|自己尝试加载| Result["findClass()"]
 ```
 
 **双亲委派核心逻辑（`loadClass` 源码）：**
@@ -588,10 +588,10 @@ graph TD
     CustomCL1["自定义 ClassLoader A"]
     CustomCL2["自定义 ClassLoader B"]
 
-    CustomCL1 -->|"委托"| CustomCL2
-    CustomCL2 -->|"委托"| AppCL
-    AppCL -->|"委托"| ExtCL
-    ExtCL -->|"委托"| BootCL
+    CustomCL1 -->|委托| CustomCL2
+    CustomCL2 -->|委托| AppCL
+    AppCL -->|委托| ExtCL
+    ExtCL -->|委托| BootCL
 ```
 
 ### 2.4 破坏双亲委派
@@ -901,7 +901,7 @@ flowchart TD
         M3["最终标记 STW<br/>处理 SATB 缓冲区"] -->
         M4["筛选回收 STW<br/>选择回收价值最高的 Region<br/>(停顿预测模型)"]
     end
-    Y3 -->|"IHOP 达到阈值"| M1
+    Y3 -->|IHOP 达到阈值| M1
 ```
 
 **G1 参数：**

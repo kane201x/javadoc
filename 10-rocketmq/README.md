@@ -489,6 +489,7 @@ sequenceDiagram
     participant NS as NameServer
     participant B as Broker
     participant "本地数据库" as DB
+    participant C as Consumer
 
     P->>B: 1. 发送半消息（PREPARE）
     B->>P: 2. 半消息写入成功，返回 offset

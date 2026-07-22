@@ -1644,7 +1644,7 @@ sequenceDiagram
     Filter->>Filter: doFilter
     Filter->>DispatcherServlet: chain.doFilter
     DispatcherServlet->>Interceptor: preHandle
-    Interpreter-->>DispatcherServlet: true 放行 / false 拦截
+    Interceptor-->>DispatcherServlet: true 放行 / false 拦截
     DispatcherServlet->>Controller: 处理方法
     Controller-->>DispatcherServlet: 响应
     DispatcherServlet->>Interceptor: postHandle

@@ -545,29 +545,32 @@ class OrderLoadBalancerConfig {
 ```mermaid
 graph LR
     subgraph FlowControl[流量控制]
+        FC[入口]
         Direct[直接模式]
         Relate[关联模式]
         Link[链路模式]
     end
 
     subgraph CircuitBreaking[熔断降级]
+        CB[入口]
         Slow[慢调用比例]
         ExceptionRatio[异常比例]
         ExceptionCount[异常数]
     end
 
     subgraph SystemProtection[系统保护]
+        SP[入口]
         Load[系统负载]
         RT[平均响应时间]
         Thread[并发线程数]
     end
 
-    Request --> FlowControl
-    Request --> CircuitBreaking
-    Request --> SystemProtection
-    FlowControl --> Block[Block 处理]
-    CircuitBreaking --> Degrade[Degrade 降级]
-    SystemProtection --> Block
+    Request --> FC
+    Request --> CB
+    Request --> SP
+    FC --> Block[Block 处理]
+    CB --> Degrade[Degrade 降级]
+    SP --> Block
 ```
 
 ### 5.2 流控模式与效果
@@ -698,10 +701,10 @@ spring:
 ```mermaid
 sequenceDiagram
     participant Client as 客户端
-    participant Gateway as Spring Cloud Gateway
+    participant Gateway as "Spring Cloud Gateway"
     participant Handler as HandlerMapping
     participant Predicate as Predicate
-    participant Filter as Filter Chain
+    participant Filter as "Filter Chain"
     participant Service as 后端服务
 
     Client->>Gateway: HTTP 请求
@@ -1040,12 +1043,12 @@ spring:
 ```mermaid
 sequenceDiagram
     participant Client as 客户端
-    participant TM as TM (事务协调器)
+    participant TM as "TM (事务协调器)"
     participant RM1 as RM-订单服务
     participant RM2 as RM-库存服务
     participant DB1 as 订单数据库
     participant DB2 as 库存数据库
-    participant TC as TC (事务协调器 Server)
+    participant TC as "TC (事务协调器 Server)"
 
     TM->>TC: 开启全局事务 (xid)
     TM->>RM1: 执行业务 SQL（xid 传播）
