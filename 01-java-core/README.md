@@ -106,17 +106,16 @@ String result = sb.toString();
 
 ```mermaid
 flowchart LR
-    subgraph heap[堆内存]
-        heapObj["new String(\"a\")"]
+    subgraph heap_region[堆内存]
+        heapObj["new String('a')"]
     end
-    subgraph pool[字符串常量池]
-        pool["\"a\""]
+    subgraph pool_region[字符串常量池]
+        poolObj["'a'"]
     end
-    heapObj -- "intern()" --> pool
-    pool --> pool
-    s1["s1 = \"a\""] --> pool
-    s2["s2 = new String(\"a\")"] --> heapObj
-    s3["s3 = s2.intern()"] --> pool
+    heapObj -->|"intern()"| poolObj
+    var1["s1 = 'a'"] --> poolObj
+    var2["s2 = new String('a')"] --> heapObj
+    var3["s3 = s2.intern()"] --> poolObj
 ```
 
 ```java
