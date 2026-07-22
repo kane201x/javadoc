@@ -651,20 +651,21 @@ SHOW BINLOG EVENTS IN 'mysql-bin.000001';
 ```mermaid
 sequenceDiagram
     participant Client
-    participant Server as "MySQL Server"
-    participant InnoDB as "InnoDB 引擎"
-    participant Binlog as Binlog
-    participant Redo as "Redo Log"
+    participant Server["MySQL Server"]
+    participant InnoDB["InnoDB 引擎"]
+    participant Binlog["Binlog"]
+    participant Redo["Redo Log"]
 
-    Client->>Server: BEGIN; UPDATE t SET x=1 WHERE id=1;
-    Server->>InnoDB: 更新内存中的行
-    InnoDB->>Redo: 写入 Redo Log（Prepare 阶段）
+    Client->>Server: 执行事务：UPDATE 更新数据
+    Note right of Client: SQL: UPDATE t SET x=1 WHERE id=1
+    Server->>InnoDB: 更新Buffer Pool内存行数据
+    InnoDB->>Redo: 写入Redo Log（Prepare阶段）
     Note over Redo: Redo Log 状态: PREPARE
-    Server->>Binlog: 写入 Binlog（事务提交）
-    Note over Binlog: Binlog 写入成功
-    InnoDB->>Redo: 更新 Redo Log（Commit 阶段）
+    Server->>Binlog: 写入事务Binlog
+    Note over Binlog: Binlog持久化完成
+    InnoDB->>Redo: 更新Redo Log（Commit阶段）
     Note over Redo: Redo Log 状态: COMMIT
-    Server->>Client: OK, 事务提交成功
+    Server->>Client: OK,事务提交成功
 ```
 
 **两阶段提交为什么必要？**
@@ -1219,9 +1220,9 @@ TiDB 使用 **Percolator** 事务模型（Google 论文实现），通过 PD 获
 ```mermaid
 sequenceDiagram
     participant C as Client
-    participant L as "Raft Leader"
-    participant F1 as "Raft Follower 1"
-    participant F2 as "Raft Follower 2"
+    participant "Raft Leader" as L
+    participant "Raft Follower 1" as F1
+    participant "Raft Follower 2" as F2
     
     C->>L: Write Request
     L->>L: Append to Log
@@ -1326,9 +1327,9 @@ OceanBase 采用 LSM-Tree（Log Structured Merge Tree）存储引擎，写入先
 ```mermaid
 sequenceDiagram
     participant C as Client
-    participant L as "Partition Leader"
-    participant F1 as "Partition Follower 1"
-    participant F2 as "Partition Follower 2"
+    participant "Partition Leader" as L
+    participant "Partition Follower 1" as F1
+    participant "Partition Follower 2" as F2
     
     C->>L: Write Request
     L->>L: Write MemTable + Clog
